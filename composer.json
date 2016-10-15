@@ -1,0 +1,21 @@
+{
+    "name": "phpie/json-api-plugin",
+    "description": "JSON API plugin for PHP Pie",
+    "type": "cakephp-plugin",
+    "license": "MIT",
+    "require": {
+        "php": "^5.5.0",
+        "cakephp/cakephp": "~3.0",
+        "woohoolabs/yin": "~0.11",
+        "justinrainbow/json-schema": "^2.0.0",
+        "seld/jsonlint": "^1.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pie\\JsonApi\\": "src"
+        }
+    }
+}
