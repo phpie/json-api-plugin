@@ -10,9 +10,6 @@
         "justinrainbow/json-schema": "^2.0.0",
         "seld/jsonlint": "^1.4.0"
     },
-    "require-dev": {
-        "phpunit/phpunit": "*"
-    },
     "autoload": {
         "psr-4": {
             "Pie\\JsonApi\\": "src"
