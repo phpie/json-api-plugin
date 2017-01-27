@@ -10,7 +10,7 @@ use Cake\Routing\Middleware\RoutingMiddleware;
 use Pie\JsonApi\Middleware\JsonApiErrorHandlerMiddleware;
 use Pie\JsonApi\Middleware\JsonApiMiddleware;
 use Pie\JsonApi\Middleware\JsonApiRequestValidatorMiddleware;
-use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactory;
+use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
 use WoohooLabs\Yin\JsonApi\Request\Request;
 use Zend\Diactoros\Response;
 
@@ -32,6 +32,6 @@ if (1 === preg_match(Configure::read('pie.jsonApi.pathMatchRegex'), $request->ge
         );
 }
 
-$exceptionFactory = new ExceptionFactory();
+$exceptionFactory = new DefaultExceptionFactory();
 $jsonApiRequest = new Request($request, $exceptionFactory);
 \Pie\JsonApi\Library\JsonApiFactory::create($jsonApiRequest, new Response(), $exceptionFactory);
