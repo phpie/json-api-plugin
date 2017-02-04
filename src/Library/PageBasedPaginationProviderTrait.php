@@ -2,7 +2,7 @@
 
 namespace Pie\JsonApi\Library;
 
-use WoohooLabs\Yin\JsonApi\Request\Pagination\PagePagination;
+use WoohooLabs\Yin\JsonApi\Request\Pagination\PageBasedPagination;
 use WoohooLabs\Yin\JsonApi\Schema\Link;
 
 trait PageBasedPaginationProviderTrait
@@ -106,7 +106,7 @@ trait PageBasedPaginationProviderTrait
             return null;
         }
 
-        return new Link($this->appendQueryStringToUrl($url, PagePagination::getPaginationQueryString($page, $size)));
+        return new Link($this->appendQueryStringToUrl($url, PageBasedPagination::getPaginationQueryString($page, $size)));
     }
 
     /**
