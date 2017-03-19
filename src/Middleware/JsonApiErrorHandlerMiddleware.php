@@ -7,18 +7,14 @@ use Cake\Error\Debugger;
 use Cake\Network\Exception\HttpException;
 use Cake\Routing\Router;
 use Exception;
-use Pie\JsonApi\Library\JsonApiFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use WoohooLabs\Yin\JsonApi\Document\ErrorDocument;
-use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactory;
 use WoohooLabs\Yin\JsonApi\Exception\JsonApiExceptionInterface;
-use WoohooLabs\Yin\JsonApi\Request\Request;
 use WoohooLabs\Yin\JsonApi\Schema\Error;
-use WoohooLabs\Yin\JsonApi\Schema\ErrorSource;
-use WoohooLabs\Yin\JsonApi\Schema\JsonApi;
 use WoohooLabs\Yin\JsonApi\Schema\Link;
 use WoohooLabs\Yin\JsonApi\Schema\Links;
+use WoohooLabs\Yin\JsonApi\Serializer\DefaultSerializer;
 
 class JsonApiErrorHandlerMiddleware
 {
@@ -37,10 +33,12 @@ class JsonApiErrorHandlerMiddleware
             $additionalMeta = Configure::read('debug') === true ? $this->getExceptionMeta($exception) : [];
 
             if ($exception instanceof JsonApiExceptionInterface) {
-                return $exception->getErrorDocument()->getResponse($response, null, $additionalMeta);
+                return $exception->getErrorDocument()
+                    ->getResponse(new DefaultSerializer(), $response, null, $additionalMeta);
             }
 
-            return $this->toErrorDocument($exception)->getResponse($response, null, $additionalMeta);
+            return $this->toErrorDocument($exception)
+                ->getResponse(new DefaultSerializer(), $response, null, $additionalMeta);
         }
     }
 
@@ -56,7 +54,7 @@ class JsonApiErrorHandlerMiddleware
             'message' => $exception->getMessage(),
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
-            'trace' => /*Debugger::formatTrace($exception->getTrace(), ['format' => 'points'])*/ []
+            'trace' => Debugger::formatTrace($exception->getTrace(), ['format' => 'points'])
         ];
     }
 
@@ -65,10 +63,8 @@ class JsonApiErrorHandlerMiddleware
         $title = 'Internal Server Error';
         $statusCode = 500;
         if ($exception instanceof HttpException) {
-            if ($exception->getCode() < 500) {
-                $title = $exception->getMessage();
-                $statusCode = $exception->getCode();
-            }
+            $title = $exception->getMessage();
+            $statusCode = $exception->getCode();
         }
 
         /** @var ErrorDocument $errorDocument */

@@ -18,19 +18,19 @@ Configure::load('Pie/JsonApi.config', 'default', false);
 
 $request = ServerRequestFactory::fromGlobals();
 
-if (1 === preg_match(Configure::read('pie.jsonApi.pathMatchRegex'), $request->getUri()->getPath())) {
-    EventManager::instance()
-        ->on(
-            'Server.buildMiddleware',
-            function (Event $event, MiddlewareQueue $middleware) {
+EventManager::instance()
+    ->on(
+        'Server.buildMiddleware',
+        function (Event $event, MiddlewareQueue $middleware) use ($request) {
+            if (1 === preg_match(Configure::read('pie.jsonApi.pathMatchRegex'), $request->getUri()->getPath())) {
                 $middleware
                     //->insertBefore(ErrorHandlerMiddleware::class, new JsonApiErrorHandlerMiddleware())
                     ->add(new JsonApiErrorHandlerMiddleware())
                     ->insertAfter(RoutingMiddleware::class, new JsonApiMiddleware())
                     ->insertAfter(JsonApiMiddleware::class, new JsonApiRequestValidatorMiddleware());
             }
-        );
-}
+        }
+    );
 
 $exceptionFactory = new DefaultExceptionFactory();
 $jsonApiRequest = new Request($request, $exceptionFactory);

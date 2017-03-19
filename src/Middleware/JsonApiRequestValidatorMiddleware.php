@@ -4,7 +4,7 @@ namespace Pie\JsonApi\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactory;
+use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
 use WoohooLabs\Yin\JsonApi\Negotiation\RequestValidator;
 use WoohooLabs\Yin\JsonApi\Request\Request;
 
@@ -34,7 +34,7 @@ class JsonApiRequestValidatorMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
-        $exceptionFactory = new ExceptionFactory();
+        $exceptionFactory = new DefaultExceptionFactory();
         $validator = new RequestValidator($exceptionFactory, $this->includeOriginalMessageInResponse);
         $jsonApiRequest = new Request($request, $exceptionFactory);
 
