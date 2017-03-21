@@ -5,6 +5,7 @@ namespace Pie\JsonApi\Middleware;
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\Network\Exception\HttpException;
+use Cake\Network\Response;
 use Cake\Routing\Router;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
@@ -62,8 +63,15 @@ class JsonApiErrorHandlerMiddleware
     {
         $title = 'Internal Server Error';
         $statusCode = 500;
+
         if ($exception instanceof HttpException) {
             $title = $exception->getMessage();
+            $statusCode = $exception->getCode();
+        } elseif ($exception->getCode() >= 400 && $exception->getCode() < 506) {
+            $cakeResponse = new Response();
+            $httpCodes = $cakeResponse->httpCodes($exception->getCode());
+
+            $title = isset($httpCodes[$exception->getCode()]) ? $httpCodes[$exception->getCode()] : '';
             $statusCode = $exception->getCode();
         }
 
