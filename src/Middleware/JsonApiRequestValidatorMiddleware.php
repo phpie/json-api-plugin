@@ -2,6 +2,7 @@
 
 namespace Pie\JsonApi\Middleware;
 
+use Cake\Core\Configure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
@@ -34,20 +35,22 @@ class JsonApiRequestValidatorMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
-        $exceptionFactory = new DefaultExceptionFactory();
-        $validator = new RequestValidator($exceptionFactory, $this->includeOriginalMessageInResponse);
-        $jsonApiRequest = new Request($request, $exceptionFactory);
+        if (1 === preg_match(Configure::read('pie.jsonApi.validatorPathMatchRegex'), $request->getUri()->getPath())) {
+            $exceptionFactory = new DefaultExceptionFactory();
+            $validator = new RequestValidator($exceptionFactory, $this->includeOriginalMessageInResponse);
+            $jsonApiRequest = new Request($request, $exceptionFactory);
 
-        if ($this->negotiate) {
-            $validator->negotiate($jsonApiRequest);
-        }
+            if ($this->negotiate) {
+                $validator->negotiate($jsonApiRequest);
+            }
 
-        if ($this->checkQueryParams) {
-            $validator->validateQueryParams($jsonApiRequest);
-        }
+            if ($this->checkQueryParams) {
+                $validator->validateQueryParams($jsonApiRequest);
+            }
 
-        if ($this->lintBody) {
-            $validator->lintBody($jsonApiRequest);
+            if ($this->lintBody) {
+                $validator->lintBody($jsonApiRequest);
+            }
         }
 
         return $next($request, $response);

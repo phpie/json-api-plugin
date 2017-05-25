@@ -3,7 +3,8 @@
 return [
     'pie' => [
         'jsonApi' => [
-            'pathMatchRegex' => '/^\/api/'
+            'pathMatchRegex' => '/^\/api/',
+            'validatorPathMatchRegex' => '/^\/api/'
         ]
     ]
 ];
